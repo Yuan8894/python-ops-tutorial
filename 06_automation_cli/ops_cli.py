@@ -6,16 +6,43 @@
 import argparse
 import sys
 import os
+from pathlib import Path
 
-# 这里为了演示，我们提取前几课最简单的逻辑
+# 获取项目根目录，以便导入其他独立课程模块
+current_dir = Path(__file__).resolve().parent
+project_root = current_dir.parent
+sys.path.append(str(project_root))
+
+import importlib
+
+# 动态加载带有数字开头文件名的模块
+system_insight = importlib.import_module("01_system_basics.system_insight")
+memory_monitor = importlib.import_module("01_system_basics.memory_disk_monitor")
+log_manager = importlib.import_module("02_file_operations.log_manager")
+net_diag = importlib.import_module("03_shell_execution.net_diagnostics")
+
 def task_sysinfo():
-    print("▶ 执行任务: 获取系统基础信息 \n[... 这里调用第一课的 get_basic_system_info() ...]\n✅ 系统正常运行中。")
+    print("▶ 执行任务: 获取系统真实基础信息")
+    # 调用第一课的方法
+    system_insight.get_basic_system_info()
+    memory_monitor.get_disk_usage()
+    memory_monitor.get_memory_auto()
+    print("✅ 系统信息获取完毕。")
 
 def task_cleanlogs(path):
-    print(f"▶ 执行任务: 清理 {path} 下的过期日志 \n[... 这里调用第二课的 clean_logs() ...]\n✅ 清理完成！")
+    print(f"▶ 执行任务: 清理 {path} 下的过期日志")
+    target_dir = Path(path)
+    if not target_dir.exists():
+        print(f"目录不存在，自动生成测试目录: {target_dir}")
+        target_dir = log_manager.setup_dummy_logs(target_dir.parent)
+    
+    # 调用第二课的方法
+    log_manager.backup_and_cleanup_logs(target_dir)
 
 def task_ping(host):
-    print(f"▶ 执行任务: 测试 {host} 的网络连通性 \n[... 这里调用第三课的 check_ping() ...]\n✅ 网络正常！")
+    print(f"▶ 执行任务: 测试 {host} 的网络连通性")
+    # 调用第三课的方法
+    net_diag.check_ping(host)
 
 
 def main():
